@@ -1,9 +1,14 @@
 1.1.x:
  - obspy.core:
+   * UTCDateTime now raises a meaningful exceptions when passing
+     invalid or out-of-bounds 'julday' during initialization (see #1988)
    * Fix pickling of traces with a sampling rate of 0 (see #1990)
  - obspy.clients.arclink:
    * Raise a warning at import time that the ArcLink protocol will be
      deprecated soon (see #1987).
+ - obspy.io.mseed:
+   * Avoid showing invalid warnings when guessing endian during parsing
+     timestamps (see #1988)
  - obspy.io.seiscomp:
    * Fix inventory read when maxClockDrift is unset in SC3ML (see #1993)
  - obspy.io.stationxml
