@@ -11,6 +11,9 @@
    * Write the UTC time zone specifier to all times (see #2015).
  - obspy.signal:
    * Allow singular COUNT units in evalresp (see #2003, #2011).
+ - obspy.io.nordic
+   * Bug-fix for amplitudes without magnitude_hint
+   * Bug-fix for wavefiles with full path stripping
 
 1.1.0: (doi: 10.5281/zenodo.165135)
  - General:
