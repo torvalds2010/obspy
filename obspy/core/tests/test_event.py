@@ -17,7 +17,7 @@ from obspy.core.event import (Catalog, Comment, CreationInfo, Event,
                               ResourceIdentifier, WaveformStreamID)
 from obspy.core.event.source import farfield
 from obspy.core.util import BASEMAP_VERSION, CARTOPY_VERSION
-from obspy.core.util.testing import ImageComparison
+from obspy.core.util.testing import ImageComparison, setup_context_testcase
 from obspy.core.event.base import QuantityError
 
 
@@ -36,11 +36,11 @@ class EventTestCase(unittest.TestCase):
         path = os.path.join(os.path.dirname(__file__), 'data')
         self.path = path
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
-        # Clear the Resource Identifier dict for the tests. NEVER do this
-        # otherwise.
-        ResourceIdentifier._ResourceIdentifier__resource_id_weak_dict.clear()
-        # Also clear the tracker.
-        ResourceIdentifier._ResourceIdentifier__resource_id_tracker.clear()
+        # setup temporary id dict for tests in this case and bind to self
+        context = ResourceIdentifier._debug_class_state()
+        state = setup_context_testcase(self, context)
+        self.r_dict = state['rdict']  # the weak resource dict
+        self.unbound = state['unbound']  # the ubound resource ids
 
     def test_str(self):
         """
@@ -181,11 +181,11 @@ class OriginTestCase(unittest.TestCase):
     Test suite for obspy.core.event.Origin
     """
     def setUp(self):
-        # Clear the Resource Identifier dict for the tests. NEVER do this
-        # otherwise.
-        ResourceIdentifier._ResourceIdentifier__resource_id_weak_dict.clear()
-        # Also clear the tracker.
-        ResourceIdentifier._ResourceIdentifier__resource_id_tracker.clear()
+        # setup temporary id dict for tests in this case and bind to self
+        context = ResourceIdentifier._debug_class_state()
+        state = setup_context_testcase(self, context)
+        self.r_dict = state['rdict']  # the weak resource dict
+        self.unbound = state['unbound']  # the ubound resource ids
 
     def test_creation_info(self):
         # 1 - empty Origin class will set creation_info to None
@@ -245,11 +245,11 @@ class CatalogTestCase(unittest.TestCase):
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
         self.iris_xml = os.path.join(path, 'iris_events.xml')
         self.neries_xml = os.path.join(path, 'neries_events.xml')
-        # Clear the Resource Identifier dict for the tests. NEVER do this
-        # otherwise.
-        ResourceIdentifier._ResourceIdentifier__resource_id_weak_dict.clear()
-        # Also clear the tracker.
-        ResourceIdentifier._ResourceIdentifier__resource_id_tracker.clear()
+        # setup temporary id dict for tests in this case and bind to self
+        context = ResourceIdentifier._debug_class_state()
+        state = setup_context_testcase(self, context)
+        self.r_dict = state['rdict']  # the weak resource dict
+        self.unbound = state['unbound']  # the ubound resource ids
 
     def test_creation_info(self):
         cat = Catalog()
@@ -527,11 +527,11 @@ class CatalogBasemapTestCase(unittest.TestCase):
     def setUp(self):
         # directory where the test files are located
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
-        # Clear the Resource Identifier dict for the tests. NEVER do this
-        # otherwise.
-        ResourceIdentifier._ResourceIdentifier__resource_id_weak_dict.clear()
-        # Also clear the tracker.
-        ResourceIdentifier._ResourceIdentifier__resource_id_tracker.clear()
+        # setup temporary id dict for tests in this case and bind to self
+        context = ResourceIdentifier._debug_class_state()
+        state = setup_context_testcase(self, context)
+        self.r_dict = state['rdict']  # the weak resource dict
+        self.unbound = state['unbound']  # the ubound resource ids
 
     def test_catalog_plot_global(self):
         """
@@ -600,11 +600,11 @@ class CatalogCartopyTestCase(unittest.TestCase):
     def setUp(self):
         # directory where the test files are located
         self.image_dir = os.path.join(os.path.dirname(__file__), 'images')
-        # Clear the Resource Identifier dict for the tests. NEVER do this
-        # otherwise.
-        ResourceIdentifier._ResourceIdentifier__resource_id_weak_dict.clear()
-        # Also clear the tracker.
-        ResourceIdentifier._ResourceIdentifier__resource_id_tracker.clear()
+        # setup temporary id dict for tests in this case and bind to self
+        context = ResourceIdentifier._debug_class_state()
+        state = setup_context_testcase(self, context)
+        self.r_dict = state['rdict']  # the weak resource dict
+        self.unbound = state['unbound']  # the ubound resource ids
 
     def test_catalog_plot_global(self):
         """
