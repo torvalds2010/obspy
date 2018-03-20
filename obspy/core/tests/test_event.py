@@ -2,7 +2,9 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from future.builtins import *  # NOQA @UnusedWildImport
+from future.utils import PY2, native_str
 
+import builtins
 import copy
 import os
 import unittest
@@ -17,6 +19,7 @@ from obspy.core.event import (Catalog, Comment, CreationInfo, Event,
                               ResourceIdentifier, WaveformStreamID)
 from obspy.core.event.source import farfield
 from obspy.core.util import BASEMAP_VERSION, CARTOPY_VERSION
+from obspy.core.util.base import _get_entry_points
 from obspy.core.util.testing import ImageComparison, setup_context_testcase
 from obspy.core.event.base import QuantityError
 
@@ -250,6 +253,38 @@ class CatalogTestCase(unittest.TestCase):
         state = setup_context_testcase(self, context)
         self.r_dict = state['rdict']  # the weak resource dict
         self.unbound = state['unbound']  # the ubound resource ids
+
+    def test_read_invalid_filename(self):
+        """
+        Tests that we get a sane error message when calling read_events()
+        with a filename that doesn't exist
+        """
+        doesnt_exist = 'dsfhjkfs'
+        for i in range(10):
+            if os.path.exists(doesnt_exist):
+                doesnt_exist += doesnt_exist
+                continue
+            break
+        else:
+            self.fail('unable to get invalid file path')
+        doesnt_exist = native_str(doesnt_exist)
+
+        if PY2:
+            exception_type = getattr(builtins, 'IOError')
+        else:
+            exception_type = getattr(builtins, 'FileNotFoundError')
+        exception_msg = "[Errno 2] No such file or directory: '{}'"
+
+        formats = _get_entry_points(
+            'obspy.plugin.catalog', 'readFormat').keys()
+        # try read_inventory() with invalid filename for all registered read
+        # plugins and also for filetype autodiscovery
+        formats = [None] + list(formats)
+        for format in formats:
+            with self.assertRaises(exception_type) as e:
+                read_events(doesnt_exist, format=format)
+            self.assertEqual(
+                str(e.exception), exception_msg.format(doesnt_exist))
 
     def test_creation_info(self):
         cat = Catalog()
