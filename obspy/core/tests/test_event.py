@@ -6,6 +6,7 @@ from future.utils import PY2, native_str
 
 import builtins
 import copy
+import pickle
 import os
 import unittest
 import warnings
@@ -552,6 +553,16 @@ class CatalogTestCase(unittest.TestCase):
             self.assertIs(rid.get_referred_object(), cat2[0])
         del cat2
         self.assertIs(rid.get_referred_object(), None)
+
+    def test_can_pickle(self):
+        """
+        Ensure a catalog can be pickled and unpickled and that the results are
+        equal.
+        """
+        cat = read_events()
+        cat_bytes = pickle.dumps(cat)
+        cat2 = pickle.loads(cat_bytes)
+        self.assertEqual(cat, cat2)
 
 
 @unittest.skipIf(not BASEMAP_VERSION, 'basemap not installed')
