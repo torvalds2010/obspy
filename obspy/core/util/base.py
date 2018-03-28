@@ -11,7 +11,9 @@ Base utilities and constants for ObsPy.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from future.builtins import *  # NOQA
+from future.utils import PY2
 
+import builtins
 import doctest
 import inspect
 import io
@@ -140,9 +142,6 @@ def create_empty_data_chunk(delta, dtype, fill_value=None):
 
     >>> create_empty_data_chunk(3, 'int', 10)
     array([10, 10, 10])
-
-    >>> create_empty_data_chunk(6, np.complex128, 0)
-    array([ 0.+0.j,  0.+0.j,  0.+0.j,  0.+0.j,  0.+0.j,  0.+0.j])
 
     >>> create_empty_data_chunk(
     ...     3, 'f')  # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
@@ -360,10 +359,19 @@ BASEMAP_VERSION = get_dependency_version('basemap')
 CARTOPY_VERSION = get_dependency_version('cartopy')
 
 
+if PY2:
+    FileNotFoundError = getattr(builtins, 'IOError')
+
+
 def _read_from_plugin(plugin_type, filename, format=None, **kwargs):
     """
     Reads a single file from a plug-in's readFormat function.
     """
+    if isinstance(filename, (str, native_str)):
+        if not os.path.exists(filename):
+            msg = "[Errno 2] No such file or directory: '{}'".format(
+                filename)
+            raise FileNotFoundError(msg)
     eps = ENTRY_POINTS[plugin_type]
     # get format entry point
     format_ep = None

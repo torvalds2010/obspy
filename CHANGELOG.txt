@@ -1,9 +1,27 @@
 1.1.x:
+ - General:
+   * Tests pass with numpy 1.14 (see #2044).
  - obspy.core:
    * Fix pickling of traces with a sampling rate of 0 (see #1990)
+ - obspy.core:
+   * read_inventory() used with non-existing file path (e.g. typo in filename)
+     now shows a proper "No such file or directory" error message (see #2062)
  - obspy.clients.arclink:
    * Raise a warning at import time that the ArcLink protocol will be
      deprecated soon (see #1987).
+ - obspy.clients.fdsn:
+   * Mass downloader: Priority lists are now correctly overwritten if `channel`
+     and/or `location` are set (see #1810, #2031, #2047).
+ - obspy.io.mseed:
+   * Ability to read files that have embedded chunks of non SEED data.
+     (see #1981, #2057).
+   * Fix util.get_start_and_end_time returning sample rate = 0 when
+     sample rate = 1 (see #2069)
+ - obspy.io.reftek:
+   * Fix problems reading some Reftek 130 files, presumably due to floating
+     point accuracy issues in comparing timestamps. Internal representation of
+     time stamps is changed to integer nanosecond POSIX timestamp (see #2036,
+     #2038)
  - obspy.io.seiscomp:
    * Fix inventory read when maxClockDrift is unset in SC3ML (see #1993)
  - obspy.io.stationxml
@@ -11,9 +29,13 @@
    * Write the UTC time zone specifier to all times (see #2015).
  - obspy.signal:
    * Allow singular COUNT units in evalresp (see #2003, #2011).
+   * PPSD: for safety reasons, raise an ObsPyException if trying to read a PPSD
+     npz file that was written with a newer version of the npz representation
+     than is used by current ObsPy version (see #2051)
  - obspy.io.nordic
    * Bug-fix for amplitudes without magnitude_hint
    * Bug-fix for wavefiles with full path stripping
+   
 
 1.1.0: (doi: 10.5281/zenodo.165135)
  - General:
